@@ -1,0 +1,50 @@
+# U-Boot: Turing RK1
+# Maintainer: Damien FLETY <damfle+archlinux@sloth.ninja>
+
+buildarch=8
+
+pkgname=uboot-rk1
+pkgver=2024.07
+pkgrel=1
+pkgdesc="U-Boot for Turing Pi RK1"
+arch=('aarch64')
+url='http://www.denx.de/wiki/U-Boot/WebHome'
+license=('GPL')
+backup=('boot/uboot.env')
+makedepends=('bc' 'git' 'python' 'python-pyelftools' 'swig' 'dtc' 'uboot-tools')
+_srcname=u-boot
+_gitbranch=v2024.07-rc3
+source=(
+        "${_srcname}::git+https://github.com/u-boot/u-boot#tag=${_gitbranch}"
+        "rkbin::git+https://github.com/rockchip-linux/rkbin"
+        "config"
+        "uboot.env"
+      )
+sha256sums=('SKIP'
+            'SKIP'
+            'f161fcd2dba8e50548c6faa97d974b78ef554497c209c619267b0b2981a1fbac'
+            '3abd67c823272a1e92645311bc64b43e2fd6e8fc70530329e247d4c7da4c59e3'
+      )
+
+build() {
+  export ROCKCHIP_TPL="${srcdir}/rkbin/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.16.bin"
+  export BL31="${srcdir}/rkbin/bin/rk35/rk3588_bl31_v1.45.elf"
+
+  cp config ${srcdir}/u-boot/.config
+
+  cd ${srcdir}/u-boot
+
+  unset CLFAGS CXXFLAGS CPPFLAGS LDFLAGS
+
+  make oldconfig
+  make
+}
+
+package() {
+  cd u-boot
+
+  mkdir -p "${pkgdir}/boot"
+  cp u-boot-rockchip.bin "${pkgdir}/boot/u-boot-rockchip.bin"
+
+  cp ../uboot.env "${pkgdir}"/boot
+}

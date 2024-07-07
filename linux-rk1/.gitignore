@@ -1,0 +1,5 @@
+linux/
+pkg/
+src/
+*.zst
+*.xz
