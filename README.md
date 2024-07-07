@@ -1,10 +1,10 @@
 archlinux-rk1
 ====================
 
-This is a WIP. It is only for others peoples with embedded skills. I don't intend to provide support for this. Only POC.
+This is only a POC. It is only for others peoples with embedded skills. I don't intend to provide support for this.
 
 Packages for basic support of ArchlinuxArm on [Turing RK1](https://turingpi.com/product/turing-rk1) board.
-Also add UEFI UKI image as initramfs do not work yet. (and I personally prefer UEFI) and selinux/apparmor support.
+Also add support for UEFI UKI image as initramfs do not work yet (and I personally prefer UEFI), and selinux/apparmor support.
 
 ## Build
 ### On platform
@@ -55,7 +55,13 @@ I use GPT partitions with one vfat for UEFI and one ext4 for OS :
 ### Initialize partitions
 
 Set up the filesystem :
+
+Create a fat32 partition for UEFI
+
 `mkfs.vfat -F32 /dev/loop0p1`
+
+Create an ext4 partition for system
+
 `mkfs.ext4 /dev/loop0p2`
 
 Mount :
@@ -64,12 +70,13 @@ Mount :
 
 ### Install
 
-Extract base archlinux ARM image or pacstrap it, follow instruction on the [archlinuxarm](https://archlinuxarm.org/platforms/armv8/generic) site.
-Note that install images are pretty old so I'm doing it via `pacstrap` in the package `arch-install-scripts`.
+Extract the base archlinux ARM image or pacstrap it, follow instruction on the [archlinuxarm](https://archlinuxarm.org/platforms/armv8/generic) site.
+Note that the archlinuxarm base images are pretty old so using `pacstrap` included the package `arch-install-scripts`.
 
 ### Install the bootloader
 
-This is needed in order to the image to boot. Once package of this repository are builts install them in the root of the target filesystem.
+This is needed for the image to be able to boot. Once packages of this repository are builts, install them in the root of the target filesystem.
+
 `dd if=/mnt/boot/u-boot-rockchip.bin of=/dev/loop0 seek=64 conv=notrunc`
 
 
@@ -78,8 +85,11 @@ This is needed in order to the image to boot. Once package of this repository ar
 If one of theses commands don't work, you are probably still into a directory of have something mounted.
 
 `sync`
+
 `umount /mnt/boot`
+
 `umount /mnt`
+
 `losetup -d /dev/loop0`
 
-And you're done. You now have a ready image that you can flash through the webui or via `scp` and `tpi` utilities (which I highly recommend)
+And you're done. You now have an image that you can flash through the webui or via `scp` and `tpi` utilities (which I highly recommend).
