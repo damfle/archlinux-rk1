@@ -4,10 +4,10 @@ buildarch=8
 
 pkgbase=linux-rk1
 _srcname=linux
-_gitbranch=v6.9
+_gitbranch=v6.10
 _kernelname=${pkgbase#linux}
 _desc="AArch64 multi-platform"
-pkgver=6.9.8
+pkgver=6.10
 pkgrel=1
 arch=('aarch64')
 url="http://www.kernel.org/"
@@ -21,7 +21,7 @@ source=(
 )
 sha256sums=('SKIP'
             'f59efad911094edd17c0ea7d4ccfd50c8a0dbbd9c7715dee7b980e41d9b1a6c8'
-            'ff158da20a4bd570c3a686f3a2119d0781bc23a3f143ced5120c38e81077daa3')
+            '0422328a9495aca2fad303f495b24a7b6d0554ceb702634b799b498f90746cee')
 prepare() {
   cd $_srcname
 
@@ -34,14 +34,16 @@ prepare() {
 
 build() {
   cd ${_srcname}
-
+  cp ../config .config
+  
   # get kernel version
+  make oldconfig
   make prepare
   make -s kernelrelease > version
-
-  # build!
+  cp ../config .config
+    # build!
   unset LDFLAGS
-  make ${MAKEFLAGS} Image Image.gz modules
+  make ${MAKEFLAGS} Image modules
   # Generate device tree blobs with symbols to support applying device tree overlays in U-Boot
   make ${MAKEFLAGS} DTC_FLAGS="-@" dtbs
 }
@@ -59,7 +61,7 @@ _package() {
   local modulesdir="$pkgdir/usr/lib/modules/$kernver"
 
   echo "Installing boot image and dtbs..."
-  install -Dm644 arch/arm64/boot/Image{,.gz} -t "${pkgdir}/boot"
+  install -Dm644 arch/arm64/boot/Image -t "${pkgdir}/boot"
   install -Dm644 arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtb -t "${pkgdir}/boot/dtbs/"
   
   echo "Installing modules..."
@@ -75,7 +77,7 @@ _package() {
   "
 
   # install mkinitcpio preset file
-  sed "${_subst}" ../linux.preset |
+  sed "${_subst}" ../linux-rk1.preset |
     install -Dm644 /dev/stdin "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
 
   # rather than use another hook (90-linux.hook) rely on mkinitcpio's 90-mkinitcpio-install.hook
