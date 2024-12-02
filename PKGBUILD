@@ -4,7 +4,7 @@
 buildarch=8
 
 pkgname=uboot-rk1
-pkgver=2024.07
+pkgver=2024.10
 pkgrel=1
 pkgdesc="U-Boot for Turing Pi RK1"
 arch=('aarch64')
