@@ -1,0 +1,40 @@
+name: Build Arch Linux Package for aarch64
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: arm64
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      run: |
+        docker buildx create --use
+        docker buildx build --platform linux/arm64 -t archlinux-aarch64-builder --load -<<EOF
+        FROM archlinux:base-devel
+        RUN pacman -Syu --noconfirm && pacman -S --noconfirm base-devel git bc python python-pyelftools swig dtc uboot-tools
+        EOF
+
+    - name: Build package
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace archlinux-aarch64-builder makepkg -si --noconfirm
+
+    - name: Upload package
+      uses: actions/upload-artifact@v2
+      with:
+        name: aarch64-package
+        path: '*.pkg.tar.zst'
