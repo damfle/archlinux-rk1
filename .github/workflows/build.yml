@@ -34,7 +34,7 @@ jobs:
         docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace archlinux-aarch64-builder makepkg -si --noconfirm
 
     - name: Upload package
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: aarch64-package
         path: '*.pkg.tar.zst'
