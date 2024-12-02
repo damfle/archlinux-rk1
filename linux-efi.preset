@@ -1,9 +1,0 @@
-# mkinitcpio preset file for the '%PKGBASE%' package
-
-ALL_config="/etc/mkinitcpio.conf"
-ALL_kver="%KERNVER%"
-
-PRESETS=('default')
-#default_image="/boot/initramfs-linux-sloth.img"
-default_uki="/boot/efi/EFI/BOOT/BOOTAA64.efi"
-#default_options="--splash /usr/share/systemd/bootctl/splash-arch.bmp"

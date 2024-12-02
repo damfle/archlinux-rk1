@@ -19,27 +19,25 @@ source=(
         "rkbin::git+https://github.com/rockchip-linux/rkbin"
         "config"
         "uboot_post.sh"
-        "linux-efi.preset"
       )
 sha256sums=('SKIP'
             'SKIP'
-            '0444b46f068451c2549c7612f1dd8b503deeb3996b79644776cf24a17da59dc9'
-            '3a56a352c747c830f89a948ecfdc90b4a9fd12bd04113a6d6cc62aa1e435f281'
-            '77bcd85f5b31cd935c0e331cd3d0b3633e18d1b209aaa865f4cf3df16fe07228'
+            '3a64d34d8d8ec65917d48978cd282de70761ce0a127fd2b32733d5525ce483ea'
+            '516f02c00926ee90e611261848c8711d24e6026d5f8483af6ae7759ce4513011'
       )
 
 build() {
-  export ROCKCHIP_TPL="${srcdir}/rkbin/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.16.bin"
-  export BL31="${srcdir}/rkbin/bin/rk35/rk3588_bl31_v1.45.elf"
+  export ROCKCHIP_TPL="${srcdir}/rkbin/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.18.bin"
+  export BL31="${srcdir}/rkbin/bin/rk35/rk3588_bl31_v1.47.elf"
 
-  cp config ${srcdir}/u-boot/.config
+  cp config "${srcdir}/u-boot/.config"
 
-  cd ${srcdir}/u-boot
+  cd "${srcdir}/u-boot"
 
   unset CLFAGS CXXFLAGS CPPFLAGS LDFLAGS
 
   make oldconfig
-  make -j10
+  make
 }
 
 package() {
@@ -48,15 +46,7 @@ package() {
   sed "${_subst}" ../uboot_post.sh |
     install -Dm744 /dev/stdin "${pkgdir}/etc/initcpio/post/uboot_post.sh"
 
-  mkdir -p "${pkgdir}/etc/mkinitcpio.d/"
-  
-  # install mkinitcpio preset file
-  sed "${_subst}" ../linux-efi.preset |
-    install -Dm644 /dev/stdin "${pkgdir}/etc/mkinitcpio.d/linux-efi.preset"
-  
-  cd u-boot
-
   mkdir -p "${pkgdir}/boot"
-  cp u-boot-rockchip.bin "${pkgdir}/boot/u-boot-rockchip.bin"
+  cp "${srcdir}/u-boot/u-boot-rockchip.bin" "${pkgdir}/boot/u-boot-rockchip.bin"
 }
 
