@@ -1,3 +1,6 @@
-./**/pkg/
-./**/src/
-./**/*.zst
+pkg/
+src/
+u-boot/
+rkbin/
+*.zst
+*.xz

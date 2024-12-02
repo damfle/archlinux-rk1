@@ -18,12 +18,14 @@ source=(
         "${_srcname}::git+https://github.com/u-boot/u-boot#tag=${_gitbranch}"
         "rkbin::git+https://github.com/rockchip-linux/rkbin"
         "config"
-        "uboot.env"
+        "uboot_post.sh"
+        "linux-efi.preset"
       )
 sha256sums=('SKIP'
             'SKIP'
-            'f161fcd2dba8e50548c6faa97d974b78ef554497c209c619267b0b2981a1fbac'
-            '8fb9ff7b0eeb0303712fa8f13f7483ba0bc082577fe60697b61d120a880928d0'
+            '0444b46f068451c2549c7612f1dd8b503deeb3996b79644776cf24a17da59dc9'
+            '3a56a352c747c830f89a948ecfdc90b4a9fd12bd04113a6d6cc62aa1e435f281'
+            '77bcd85f5b31cd935c0e331cd3d0b3633e18d1b209aaa865f4cf3df16fe07228'
       )
 
 build() {
@@ -37,14 +39,24 @@ build() {
   unset CLFAGS CXXFLAGS CPPFLAGS LDFLAGS
 
   make oldconfig
-  make
+  make -j10
 }
 
 package() {
+  mkdir -p "${pkgdir}/etc/initcpio/post/"
+
+  sed "${_subst}" ../uboot_post.sh |
+    install -Dm744 /dev/stdin "${pkgdir}/etc/initcpio/post/uboot_post.sh"
+
+  mkdir -p "${pkgdir}/etc/mkinitcpio.d/"
+  
+  # install mkinitcpio preset file
+  sed "${_subst}" ../linux-efi.preset |
+    install -Dm644 /dev/stdin "${pkgdir}/etc/mkinitcpio.d/linux-efi.preset"
+  
   cd u-boot
 
   mkdir -p "${pkgdir}/boot"
   cp u-boot-rockchip.bin "${pkgdir}/boot/u-boot-rockchip.bin"
-
-  cp ../uboot.env "${pkgdir}"/boot
 }
+
