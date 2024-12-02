@@ -13,7 +13,7 @@ license=('GPL')
 backup=('boot/uboot.env')
 makedepends=('bc' 'git' 'python' 'python-pyelftools' 'swig' 'dtc' 'uboot-tools')
 _srcname=u-boot
-_gitbranch=v2024.07-rc3
+_gitbranch=v2024.10
 source=(
         "${_srcname}::git+https://github.com/u-boot/u-boot#tag=${_gitbranch}"
         "rkbin::git+https://github.com/rockchip-linux/rkbin"
