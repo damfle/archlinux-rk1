@@ -11,8 +11,8 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
-
+      uses: actions/checkout@v4
+      
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
       with:
@@ -25,7 +25,7 @@ jobs:
       run: |
         docker buildx create --use
         docker buildx build --platform linux/arm64 -t archlinux-aarch64-builder --load -<<EOF
-        FROM archlinux:base-devel
+        FROM menci/archlinuxarm
         RUN pacman -Syu --noconfirm && pacman -S --noconfirm base-devel git bc python python-pyelftools swig dtc uboot-tools
         EOF
 
