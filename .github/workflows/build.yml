@@ -26,7 +26,11 @@ jobs:
         docker buildx create --use
         docker buildx build --platform linux/arm64 -t archlinux-aarch64-builder --load -<<EOF
         FROM menci/archlinuxarm
-        RUN pacman -Syu --noconfirm && pacman -S --noconfirm base-devel git bc python python-pyelftools swig dtc uboot-tools
+        RUN pacman -Syu --noconfirm && pacman -S --noconfirm base-devel git bc python python-pyelftools swig dtc uboot-tools && \
+            useradd -m builder && \
+            echo "builder ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+        USER builder
         EOF
 
     - name: Build package
