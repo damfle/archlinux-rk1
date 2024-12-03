@@ -33,7 +33,7 @@ build() {
   export ROCKCHIP_TPL="${srcdir}/rkbin/bin/rk35/rk3588_ddr_lp4_2112MHz_lp5_2400MHz_v1.18.bin"
   export BL31="${srcdir}/rkbin/bin/rk35/rk3588_bl31_v1.47.elf"
 
-  cp config "${srcdir}/u-boot/.config"exit
+  cp config "${srcdir}/u-boot/.config"
 
   cd "${srcdir}/u-boot"
 
@@ -44,8 +44,6 @@ build() {
 }
 
 package() {
-  mkdir -p "${pkgdir}/etc/initcpio/post/"
-
   sed "${_subst}" "${srcdir}/99-uboot-post.sh" |
     install -Dm744 /dev/stdin "${pkgdir}/etc/initcpio/post/99-uboot-post.sh"
 
