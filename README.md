@@ -1,16 +1,13 @@
-archlinux-rk1
+uboot-rk1
 ====================
 
-This is just a POC. It's only for other people with embedded skills. I do not intend to provide support for this.
-
-Packages for basic ArchlinuxArm support on the [Turing RK1](https://turingpi.com/product/turing-rk1) board.
-Also add support for UEFI UKI image since initramfs doesn't work yet (and I personally prefer UEFI), as well as support for selinux/apparmor.
+Uboot package for ArchlinuxArm support on the [Turing RK1](https://turingpi.com/product/turing-rk1) board.
 
 
 ## Build
 ### On platform
 
-You can build them like any other Archlinux package. `cd` into the package directory and run `makepkg`.
+You can build them like any other Archlinux package run `makepkg`:
 
 `makepkg -si`
 
